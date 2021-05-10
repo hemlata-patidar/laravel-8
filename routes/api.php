@@ -31,3 +31,10 @@ Route::prefix('product/v1')->group(function () {
     });
 });
 
+//Route::post('/register', [ProductController::class, 'register']);
+Route::post('/register', [ProductController::class, 'register']);
+Route::post('/login', [ProductController::class, 'login']);
+Route::get('/login', [ProductController::class, 'login'])->name('login');
+
+Route::middleware('auth:api')->get('/details', [ProductController::class, 'index']);
+
