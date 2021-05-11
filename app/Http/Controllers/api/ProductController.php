@@ -5,10 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
-use App\Models\User;
-use Validator;
 //use App\Http\Resources\Product as PoductResource;
 
 class ProductController extends Controller
@@ -83,44 +80,6 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         if ($product->delete()) {
             return response()->json(["method" => 'DELETE', "data" => $product, "status" => 200]);
-        }
-    }
-
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(["method" => 'POST', "error" => $validator->errors(), "status" => 200]);
-        }
-
-        $input = $request->all();
-        //print_r($input);
-        $input['password'] = bcrypt($input['password']);
-
-        $user = User::create($input);
-
-        $responseArray = [];
-        $responseArray['token'] = $user->createToken('MyApp')->accessToken;
-        $responseArray['name'] = $user->name;
-        return response()->json(["method" => 'POST', "data" => $responseArray, "status" => 200]);
-    }
-
-    public function login(Request $request) {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $responseArray = [];
-            $responseArray['token'] = $user->createToken('MyApp')->accessToken;
-            $responseArray['name'] = $user->name;
-            return response()->json(["method" => 'POST', "data" => $responseArray, "status" => 200]);
-        
-        } else {
-            return response()->json(['error' => 'Unauthanticated'],203);
         }
     }
 

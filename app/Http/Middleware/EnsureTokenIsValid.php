@@ -17,11 +17,12 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next)
     {
         $acceptHeader = $request->header('Content-Type');
-        if ($acceptHeader == 'application/json') {
-            return $next($request);
-        }
-        else {
-            return   response()->json(['message' => 'data Content-Type should be in JSON'], 406);
-        }
+        return $next($request);
+        // if ($acceptHeader == 'application/json') {
+        //     return $next($request);
+        // }
+        // else {
+        //     return   response()->json(['message' => 'data Content-Type should be in JSON'], 406);
+        // }
     }
 }

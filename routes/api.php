@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ProductController;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\PhotoController;
 use App\Http\Middleware\EnsureTokenIsValid;
 
 
@@ -31,10 +34,27 @@ Route::prefix('product/v1')->group(function () {
     });
 });
 
-//Route::post('/register', [ProductController::class, 'register']);
-Route::post('/register', [ProductController::class, 'register']);
-Route::post('/login', [ProductController::class, 'login']);
-Route::get('/login', [ProductController::class, 'login'])->name('login');
+//Route::middleware('auth:api')->get('/', [UserController::class, 'index']);
+Route::middleware('api')->group( function () {
+    //Route::get('/', [AuthController::class, 'index']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+});
 
-Route::middleware('auth:api')->get('/details', [ProductController::class, 'index']);
+
+Route::middleware('auth:api')->group( function () {
+    Route::get('/userdetails', [UserController::class, 'index']);
+    Route::get('/{id}', [UserController::class, 'show']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::put('/{id}', [UserController::class, 'update']);
+    Route::delete('/{id}', [UserController::class, 'destroy']);
+});
+Route::apiResources(['photos', PhotoController::class]);
+
+// Route::apiResources([
+//     'index' => AuthController::class,
+//     'register' => AuthController::class,
+//     'login' => AuthController::class,
+// ]);
 
