@@ -18,7 +18,11 @@ class ProductController extends Controller
     public function index()
     {
         //get records
+
         $product = Product::all();
+        //$product = Product::paginate(2);
+        // Product::withTrashed()
+        // ->restore();
         return response()->json(["method" => 'GET', "data" => $product, "status" => 200]);
     }
 

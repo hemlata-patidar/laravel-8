@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Userinfos;
 use App\Models\User;
+use App\Models\Address;
 use Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -20,8 +21,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $Userinfos = Userinfos::all();
-        return response()->json(["method" => 'GET', "data" => $Userinfos])->setStatusCode(200);
+        $User = User::all();
+        return response()->json(["method" => 'GET', "data" => $User->address])->setStatusCode(200);
     }
 
     /**
