@@ -24,27 +24,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \Response::macro('succeedResponse', function ($code, $method, $data, $time_start) {
-            $time_end = microtime(true);
-            $execution_time = round(($time_end - $time_start)*1000, 2);
+        \Response::macro('succeedResponse', function ($code, $data) {
             return \Response::json([
                 'status' => 'success',
-                'method' => $method,
                 'data' => $data,
                 'error' => false,
                 'errorMessage' => '',
-                'processingTime' => $execution_time .' ms'
             ])->setStatusCode($code);
         });
 
-        \Response::macro('errorResponse', function ($code, $data, $time_start) {
-            $time_end = microtime(true);
-            $execution_time = round(($time_end - $time_start)*1000, 2);
+        \Response::macro('errorResponse', function ($code, $data) {
             return \Response::json([
                 'error' => true,
                 'message' => $data,
-                'processingTime' => $execution_time.' ms'
             ])->setStatusCode($code);
+        });
+
+        \Response::macro('searchClause', function ($column, $search) {
+            return where($column, 'LIKE', "%{$search}%")->get();
         });
     }
 }

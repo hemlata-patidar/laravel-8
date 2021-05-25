@@ -16,7 +16,6 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         try {
-            $time_start = microtime(true);
             $input = $request->all();
             $rules = array(
                 'body' => 'required',
@@ -24,13 +23,13 @@ class CommentController extends Controller
             );
             $validator = Validator::make($input, $rules);
             if ($validator->fails()) {
-                return response()->errorResponse(422, $validator->errors()->first(), $time_start);
+                return response()->errorResponse(422, $validator->errors()->first());
             }
             $input['user_id'] = auth()->user()->id;
             $response = Comment::create($input);
-            return  response()->succeedResponse(200, 'POST', $response, $time_start);
+            return  response()->succeedResponse(200, 'POST', $response);
         } catch(\Exception $e) {
-            return response()->errorResponse(403, $e->getMessage(), $time_start);
+            return response()->errorResponse(403, $e->getMessage());
         }
     }
 }

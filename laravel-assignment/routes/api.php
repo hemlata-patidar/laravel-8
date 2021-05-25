@@ -18,29 +18,25 @@ use App\Http\Controllers\api\CommentController;
 */
 
 Route::prefix('v1')->group(function () {
-    //Route::group(['middleware' => 'tokenEnsure'], function() {
+    Route::group(['middleware' => ['executaionTime','localization']], function() {
         
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
         
         Route::group(['middleware' => 'auth:api'], function() {
+            Route::apiResource('posts', PostController::class);
             Route::post('/comment', [CommentController::class, 'store']);
-
-
-            Route::get('/all', [PostController::class, 'index']);
-            Route::get('/log-all', [PostController::class, 'loggedInPosts']);
-            Route::post('/', [PostController::class, 'store']);
-            Route::post('/search', [PostController::class, 'search']);
             Route::post('/like', [PostController::class, 'likePost']);
-            Route::post('/{id}', [PostController::class, 'update']);
-            Route::get('/{id}', [PostController::class, 'show']);
-            Route::delete('/{id}', [PostController::class, 'destroy']);
+            Route::get('/log-all', [PostController::class, 'loggedInPosts']);
+            Route::post('/search', [PostController::class, 'search']);
             
-            
+            // Route::get('/all', [PostController::class, 'index']);
+            // Route::post('/', [PostController::class, 'store']);
+            // Route::post('/{id}', [PostController::class, 'update']);
+            // Route::get('/{id}', [PostController::class, 'show']);
+            // Route::delete('/{id}', [PostController::class, 'destroy']);
            // Route::post('post/', [UserController::class, 'postData']);
            // Route::get('post/', [UserController::class, 'postData']);
         });
-
-
-   // });
+    });
 });
