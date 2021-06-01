@@ -183,6 +183,7 @@ class PostController extends Controller
         try {
             $search = $input['search'];
             $searchPosts = Post::where('title', 'LIKE', "%{$search}%")->get();
+            //$searchPosts = Post::searchClause('title', $search);
             return  response()->succeedResponse(200, $searchPosts);
         } catch (\Exception $e) {
             return response()->errorResponse(403, $e->getMessage());

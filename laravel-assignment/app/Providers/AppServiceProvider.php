@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Response;
+use Illuminate\Database\Query\Builder;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
             ])->setStatusCode($code);
         });
 
-        \Response::macro('searchClause', function ($column, $search) {
+        Builder::macro('searchClause', function (string $column, string $search) {
             return where($column, 'LIKE', "%{$search}%")->get();
         });
     }

@@ -13,7 +13,8 @@
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
         "overtrue/laravel-follow": "^2.3",
-        "overtrue/laravel-like": "^4.0"
+        "overtrue/laravel-like": "^4.0",
+        "yajra/laravel-datatables-oracle": "^9.18"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
