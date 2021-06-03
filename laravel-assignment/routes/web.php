@@ -19,6 +19,7 @@ Route::get('/', function () {
 });
 
 Route::resource('posts', PostController::class);
+//Route::delete('/delete',[PostController::class, 'destroy'])->name('delete');
 //Route::get('/all-posts', [PostController::class, 'index'])->name('getpost');
 //Route::get('/all-posts', [PostController::class, 'index']);
 

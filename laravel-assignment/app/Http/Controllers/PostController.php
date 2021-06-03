@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use DataTables;
+use Validator;
 
 class PostController extends Controller
 {
@@ -18,11 +21,18 @@ class PostController extends Controller
             $data = Post::all();
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('image', function ($data) { 
+                    //$url= 'file:///'.public_path().'/images/'.$data->image;
+                    $url= asset('public/images/'.$data->image);
+                    //$url= url('public/images/'.$data->image);
+                    return '<img src="'.$url.'" border="0" width="40" class="img-rounded" align="center" />';
+                })
                 ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+                    $btn = '<button type="button" class="btn btn-success btn-sm" id="getEditPostData" data-id="'.$row->id.'">Edit</button>
+                    <button type="button" data-id="'.$row->id.'" data-toggle="modal" data-target="#DeletePostModal" class="btn btn-danger btn-sm" id="getDeleteId">Delete</button>';
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['image','action'])
                 ->make(true);
         }
 
@@ -34,9 +44,34 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $input = $request->all();
+        $rules = array(
+            'image' => 'required|mimes:jpeg,png,jpg',
+            'title' => 'required'
+        );
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+        try {
+            $file = $request->file('image');
+            if ($file) {
+                $input['image'] = time() . '.' . $file->getClientOriginalExtension();
+            }
+            $destinationPath = public_path('/images/');
+            $file->move($destinationPath, $input['image']);
+            $post = new POST();
+            $post->image = $input['image'];
+            $post->title = $input['title'];
+            $post->user_id = 1;
+            $post->save();
+            $post->image = url('public/images/' . $post->image);
+            return response()->json(['success'=>'Post created successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -47,7 +82,34 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $rules = array(
+            'image' => 'required',
+            'title' => 'required'
+        );
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+        try {
+            if($request->file('image')){
+                $file = $request->file('image');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+                //print_r($filename);die;
+                $file->move(public_path('/images/'). $filename);
+                $input['image']= $filename;
+            }
+            
+            $post = new POST();
+            $post->image = $input['image'];
+            $post->title = $input['title'];
+            $post->user_id = 1;
+            $post->save();
+            $post->image = url('public/images/' . $post->image);
+           // return response()->json(['success'=>'Post created successfully']);
+        } catch (\Exception $e) {
+            //return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -69,7 +131,12 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Post::find($id);
+        $html = '<div class="form-group">
+                <label for="Title">Title:</label>
+                <input type="text" class="form-control" name="title" id="editTitle" value="'.$data->title.'">
+            </div>';
+        return response()->json(['html'=>$html]);
     }
 
     /**
@@ -81,7 +148,19 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'title' => 'required'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $post = Post::find($id);
+        $post->title = $request->input('title');
+        $post->update();
+        return response()->json(['success'=>'Post updated successfully']);
+
     }
 
     /**
@@ -92,6 +171,13 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $post = Post::find($id);
+            if ($post->delete()) {
+                return response()->json(['success'=>'Post deleted successfully']);
+            } 
+        } catch (\Exception $e) {
+            return response()->errorResponse(403, $e->getMessage());
+        } 
     }
 }
