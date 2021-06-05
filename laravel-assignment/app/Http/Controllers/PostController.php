@@ -18,12 +18,10 @@ class PostController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Post::all();
+            $data = Post::orderBy('id', 'DESC')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('image', function ($data) { 
-                    //$url= 'file:///'.public_path().'/images/'.$data->image;
-                    //$url= asset('public/images/'.$data->image);
                     $url= url('images/'.$data->image);
                     return '<img src="'.$url.'" border="0" width="40" class="img-rounded" align="center" />';
                 })
@@ -46,32 +44,7 @@ class PostController extends Controller
      */
     public function create(Request $request)
     {
-        $input = $request->all();
-        $rules = array(
-            'image' => 'required|mimes:jpeg,png,jpg',
-            'title' => 'required'
-        );
-        $validator = Validator::make($input, $rules);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->all()]);
-        }
-        try {
-            $file = $request->file('image');
-            if ($file) {
-                $input['image'] = time() . '.' . $file->getClientOriginalExtension();
-            }
-            $destinationPath = public_path('/images/');
-            $file->move($destinationPath, $input['image']);
-            $post = new POST();
-            $post->image = $input['image'];
-            $post->title = $input['title'];
-            $post->user_id = 1;
-            $post->save();
-            $post->image = url('public/images/' . $post->image);
-            return response()->json(['success'=>'Post created successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['errors' => $e->getMessage()]);
-        }
+
     }
 
     /**
@@ -82,7 +55,6 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-       
         $input = $request->all();
         $rules = array(
             'image' => 'required',
@@ -92,21 +64,16 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()]);
         }
-        
         try {
-            
             $file = $request->image;
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            //print_r($filename);die;
             $file->move(public_path('images'), $filename);
-            
             $post = new post;
             $post->image = $filename;
             $post->title = $request->title;
             $post->user_id = 1;
             $post->save();
-            
-            return response()->json(['success'=>'Post created successfully']);
+           return response()->json(['success'=>'Post created successfully']);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()]);
         }

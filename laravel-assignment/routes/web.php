@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +15,17 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Auth::routes();
+Route::group(['middleware' => 'is_admin'], function() {
+  Route::resource('posts', PostController::class);
+  Route::get('/home', [HomeController::class, 'adminHome'])->name('admin.home');
+  Route::get('/', [PostController::class, 'index'])->name('posts');
 });
 
-Route::resource('posts', PostController::class);
-//Route::delete('/delete',[PostController::class, 'destroy'])->name('delete');
-//Route::get('/all-posts', [PostController::class, 'index'])->name('getpost');
-//Route::get('/all-posts', [PostController::class, 'index']);
+
+
+
+
 
 
 

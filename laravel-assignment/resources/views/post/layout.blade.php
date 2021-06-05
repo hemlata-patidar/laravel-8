@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <title>View posts</title>
@@ -33,4 +33,4 @@
 </div>
 @yield('script')
 </body>
-</html>
+</html> -->

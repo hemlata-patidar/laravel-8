@@ -20,7 +20,6 @@ $(document).ready(function() {
   // Create post Ajax request.
   $('#SubmitCreatePostForm').click(function(e) {
     e.preventDefault();
-    //   formData = $('#formPost').serialize();
     var formData = new FormData();
     var title = $('#title').val();
     formData.append('title', title);
@@ -46,12 +45,11 @@ $(document).ready(function() {
             } else {
               $('.alert-danger').hide();
               $('.alert-success').show();
-              //$('.datatable').DataTable().ajax.reload();
-              setInterval(function(){ 
-                $('.alert-success').hide();
-                $('#CreatePostModal').modal('hide');
-               // location.reload();
-              }, 2000);
+              $('.dataTable').DataTable().ajax.reload();
+              $('.alert-success').hide();
+              $('.modal-backdrop').remove();
+              $('#CreatePostModal').modal('hide');
+              document.getElementById('formPost').reset();
             }
         }
       });
@@ -74,7 +72,7 @@ $(document).ready(function() {
           //     id: id,
           // },
           success: function(result) {
-            console.log(result);
+            //console.log(result);
             $('#EditPostModalBody').html(result.html);
             $('#EditPostModal').show();
           }
@@ -106,11 +104,9 @@ $(document).ready(function() {
               } else {
                 $('.alert-danger').hide();
                 $('.alert-success').show();
-                $('.datatable').DataTable().ajax.reload();
-                setInterval(function(){ 
-                  $('.alert-success').hide();
-                  $('#EditPostModal').hide();
-                }, 2000);
+                $('.dataTable').DataTable().ajax.reload();
+                $('#EditPostModal').hide();
+                document.getElementById('formPost').reset();
               }
           }
       });
@@ -133,11 +129,10 @@ $(document).ready(function() {
       url: "posts/"+id,
       method: 'DELETE',
       success: function(result) {
-        setInterval(function(){ 
-          $('#DeletePostModal').hide();
-          $('.datatable').DataTable().ajax.reload();
-          location.reload();
-        }, 1000);
+        $('.dataTable').DataTable().ajax.reload();
+        $('.modal-backdrop').remove();
+        $('#DeletePostModal').modal('hide');
+        document.getElementById('formPost').reset();
       }
     });
   });

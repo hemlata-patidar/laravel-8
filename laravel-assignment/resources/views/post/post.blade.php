@@ -1,5 +1,4 @@
-@extends('post.layout')
-
+@extends('layouts.app')
 @section('content')
 <div class="container">
   <div class="row">
@@ -7,7 +6,7 @@
       <div class="row">
         <div class="col-md-12 text-center">
           <h3><strong>All Posts</strong></h3>
-          <button style="float: right; font-weight: 900; margin-bottom: 10px;" class="btn btn-info btn-sm" type="button"  data-toggle="modal" data-target="#CreatePostModal">
+          <button style="float: right; font-weight: 900; margin-bottom: 10px;" class="btn btn-primary btn-sm" type="button"  data-toggle="modal" data-target="#CreatePostModal">
             + Post
           </button>
         </div>
@@ -126,7 +125,4 @@
         </div>
     </div>
 </div>
-@endsection
-@section('script')
-
 @endsection
